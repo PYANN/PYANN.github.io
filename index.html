@@ -171,7 +171,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://pyann.github.io/2019/11/11/slots%E7%9A%84%E4%BD%BF%E7%94%A8/">
+    <link itemprop="mainEntityOfPage" href="http://pyann.github.io/2019/11/14/Python-%60@property%60-%E7%9A%84%E4%BD%BF%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -185,7 +185,140 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2019/11/11/slots%E7%9A%84%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">slots的使用</a>
+            <a href="/2019/11/14/Python-%60@property%60-%E7%9A%84%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">Python @property 的使用</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-11-14 16:10:11 / 修改时间：16:11:40" itemprop="dateCreated datePublished" datetime="2019-11-14T16:10:11+08:00">2019-11-14</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="Python-property-的使用"><a href="#Python-property-的使用" class="headerlink" title="Python @property 的使用"></a>Python @property 的使用</h3><p>在绑定属性时，如果我们直接把属性八路出去，虽然写起来很简单，但是，没办法检查参数，导致可以把成绩（一般成绩范围是0-100）随意更改：</p>
+<pre><code>s = Student()
+s.score = 9999</code></pre><p>这个显然不符合成绩评定的规范。为了限制score的范围，可以通过一个set_score()的方法来设置成绩，再通过一个get_score()来获取成绩，这样，在set_score()方法里，就可以检查参数：</p>
+<pre><code>class Student(object):
+
+    def get_score(self):
+        return self._score
+
+    def set_score(self, value):
+            if not isinstance(value, int):
+            raise ValueError(&#39;score must be an integer!&#39;)
+        if value &lt; 0 or value &gt; 100:
+            raise ValueError(&#39;score must between 0 ~ 100!&#39;)
+        self._score = value</code></pre><p>这样对Student实例进行操作时，就不能随意设置score了:</p>
+<pre><code>&gt;&gt;&gt; s = Student()
+&gt;&gt;&gt; s.set_score(60) # ok!
+&gt;&gt;&gt; s.get_score()
+60
+&gt;&gt;&gt; s.set_score(9999)
+Traceback (most recent call last):
+  ...
+ValueError: score must between 0 ~ 100!</code></pre><p>However,上文调用方法有略显复杂，没有直接用属性这么直观简单。<br>这时候，可以考虑使用装饰器（decorator）。装饰器可以给函数动态加上功能，对于类的方法，装饰器一样起作用。Python内置<code>@property</code>装饰器就是负责吧一个方法变成属性调用：</p>
+<pre><code>class Student(object):
+    @property
+    def score(self):
+        return self._score
+
+    @score.setter
+    def score(self,value):
+        if not isinstance(value,int):
+            raise ValueError(&quot;score must be an integer!&quot;)
+        if value &lt; 0 or value &gt; 100:
+            raise ValueError(&quot;score must between 0 ~ 100!&quot;)
+        self._score = value</code></pre><p><code>@property</code> 可以把方法装饰成属性来调用(相当于把getter方法变成属性)，<code>@property</code>在装饰方法的同时，本身又会创建另外一个装饰器<code>@score.setter</code>， 负责把一个setter方法变成属性赋值：</p>
+<pre><code>&gt;&gt;&gt; s = Student()
+&gt;&gt;&gt; s.score = 60 # OK，实际转化为s.set_score(60)
+&gt;&gt;&gt; s.score # OK，实际转化为s.get_score()
+60
+&gt;&gt;&gt; s.score = 9999
+Traceback (most recent call last):
+  ...
+ValueError: score must between 0 ~ 100!</code></pre><p>注意到这个神奇的<code>@property</code>，我们在对实例属性操作的时候，就知道该属性很可能不是直接暴露的，而是通过getter和setter方法来实现的。</p>
+<p>还可以定义只读属性，只定义getter方法，不定义setter方法就是一个只读属性：</p>
+<pre><code>class Student(object):
+
+    @property
+    def birth(self):
+        return self._birth
+
+    @birth.setter
+    def birth(self, value):
+        self._birth = value
+
+    @property
+    def age(self):
+        return 2019 - self._birth</code></pre><p>上面的<code>birth</code>是可读写属性，而<code>age</code>就是一个只读属性，因为<code>age</code>可以根据<code>birth</code>和当前时间计算出来。</p>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p><code>@property</code>广泛应用在类的定义中，可以让调用者写出简短的代码，同时保证对参数进行必要的检查，这样，程序运行时就减少了出错的可能性。</p>
+<p>利用@property给一个Screen对象加上width和height属性，以及一个只读属性resolution：</p>
+<pre><code>class Screen(object):
+    @property
+    def width(self):
+        return self._width
+    @width.setter
+    def width(self,value):
+        if not isinstance(value,int):
+            raise ValueError(&quot;不是数字&quot;)
+        self._width=value
+    @property
+    def height(self):
+        return self._height
+    @height.setter
+    def height(self,value):
+        self._height=value
+    @property
+    def resolution(self):
+        return self._width*self._height</code></pre>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://pyann.github.io/2019/11/11/slots-%E7%9A%84%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PYANN">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PYANN's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/11/11/slots-%E7%9A%84%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">slots的使用</a>
         </h1>
 
         <div class="post-meta">
@@ -530,7 +663,7 @@ plt.rcParams[&#39;axes.unicode_minus&#39;] = False  # 用来正常显示负号</
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-count">6</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
