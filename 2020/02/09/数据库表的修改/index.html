@@ -15,7 +15,7 @@
   <meta name="description" content="">
   <meta name="author" content="PYANN">
   <meta name="keywords" content="">
-  <title>标签 ~ PYANN&#39;s blog</title>
+  <title>数据库表的修改 ~ PYANN&#39;s blog</title>
   <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css"  >
   <link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css"  >
   <link rel="stylesheet" href="/lib/mdbootstrap/css/mdb.min.css"  >
@@ -96,6 +96,9 @@
             </span>
 
             
+              <br>
+              <p>星期日, 二月 9日 2020, 8:04 晚上</p>
+            
           </div>
 
           
@@ -106,22 +109,67 @@
 
   <main>
     
-      <div class="container nopadding-md">
-        <div class="py-5 z-depth-3" id="board">
-          
-          <div class="container">
-            <div class="row">
-              <div class="col-12 col-md-10 m-auto">
-                
+      
 
-<div class="text-center tagcloud">
-  <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 15px; color: #bbe">C语言</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 15px; color: #bbe">数据库</a>
-</div>
-              </div>
-            </div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="py-5 z-depth-3" id="board">
+        <div class="post-content mx-auto">
+          <div class="markdown-body">
+            <h3 id="数据库表的修改"><a href="#数据库表的修改" class="headerlink" title="数据库表的修改"></a>数据库表的修改</h3><h4 id="1-添加列："><a href="#1-添加列：" class="headerlink" title="1.添加列："></a>1.添加列：</h4><p>alter table &lt;表名&gt; add &lt;新列名&gt; &lt;数据类型&gt; [first|after 已存在列名];</p>
+<pre><code class="bash">alter table t_user add tel int;</code></pre>
+<h4 id="2-修改列名"><a href="#2-修改列名" class="headerlink" title="2.修改列名"></a>2.修改列名</h4><p>alter table &lt;表名&gt; change &lt;旧列名&gt; &lt;新列名&gt; &lt;新数据类型&gt;;</p>
+<pre><code class="bash">alter table t_user change tel email varchar(30);</code></pre>
+<h4 id="3-修改列的数据类型："><a href="#3-修改列的数据类型：" class="headerlink" title="3.修改列的数据类型："></a>3.修改列的数据类型：</h4><p>alter table &lt;表名&gt; modify &lt;列名&gt; &lt;数据类型&gt;;</p>
+<pre><code class="bash">alter table t_user modify email char(20);</code></pre>
+<h4 id="4-修改列的排列位置："><a href="#4-修改列的排列位置：" class="headerlink" title="4.修改列的排列位置："></a>4.修改列的排列位置：</h4><p>alter table &lt;表名&gt; modify &lt;列名1&gt; &lt;数据类型&gt; first|after &lt;列名2&gt;；</p>
+<pre><code class="bash">alter table t_user modify email char(20) after name;</code></pre>
+<h4 id="5-删除列"><a href="#5-删除列" class="headerlink" title="5.删除列"></a>5.删除列</h4><p>alter table &lt;表名&gt; drop &lt;列名&gt;；</p>
+<pre><code class="bash">alter table t_userc drop email;</code></pre>
+<h4 id="6-修改表名"><a href="#6-修改表名" class="headerlink" title="6.修改表名"></a>6.修改表名</h4><p>alter table &lt;旧表名&gt; rename to &lt;新表名&gt;</p>
+<pre><code class="bash">alter table t_user rename to tab_user;</code></pre>
+
+            <hr>
+          </div>
+          <br>
+          <div>
+            
+            <p>
+              <i class="iconfont icon-tag"></i>
+              
+                <a class="hover-with-bg" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93">数据库</a>
+              
+            </p>
+            
+              <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://zh.wikipedia.org/wiki/Wikipedia:CC_BY-SA_3.0%E5%8D%8F%E8%AE%AE%E6%96%87%E6%9C%AC" target="_blank" rel="nofollow noopener noopener">CC BY-SA 3.0协议</a> 。转载请注明出处！</p>
+            
           </div>
         </div>
       </div>
+    </div>
+    <div class="d-none d-lg-block col-lg-2 toc-container">
+      
+  <div id="toc">
+    <p class="h4"><i class="far fa-list-alt"></i>&nbsp;目录</p>
+    <div id="tocbot"></div>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- custom -->
+
+
+<!-- Comments -->
+<div class="col-lg-7 mx-auto nopadding-md">
+  <div class="container comments mx-auto" id="comments">
+    
+  </div>
+</div>
+
     
   </main>
 
@@ -175,6 +223,11 @@
   <script src="/js/lazyload.js" ></script>
 
 
+  
+    <script src="/lib/tocbot/tocbot.min.js" ></script>
+  
+  <script src="/js/post.js" ></script>
+
 
   <script src="/lib/prettify/prettify.min.js" ></script>
   <script>
@@ -190,7 +243,7 @@
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "标签&nbsp;",
+        "数据库表的修改&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 50,
